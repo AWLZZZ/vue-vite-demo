@@ -2,16 +2,24 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "../views/Login.vue";
 import Home from "../views/Home.vue";
+import WebHome from "../views/web/WebHome.vue";
 import AdminLayout from "../layout/AdminLayout.vue";
 import { useUserStore } from "../stores/user";
 
 const routes = [
+  // 🌐 普通前端（不需要登录）
+  {
+    path: "/web",
+    component: WebHome,
+  },
+
+  // 🔐 后台登录
   {
     path: "/login",
     component: Login,
   },
 
-  // 后台 Layout
+  // 🧩 后台 Layout
   {
     path: "/",
     component: AdminLayout,
@@ -23,10 +31,10 @@ const routes = [
     ],
   },
 
-  // 访问根路径时的默认行为
+  // 🏠 默认入口
   {
     path: "/",
-    redirect: "/login",
+    redirect: "/web",
   },
 ];
 
@@ -35,7 +43,7 @@ const router = createRouter({
   routes,
 });
 
-// 路由守卫（保持你原来的逻辑）
+// 路由守卫
 router.beforeEach((to) => {
   const userStore = useUserStore();
 
@@ -49,4 +57,3 @@ router.beforeEach((to) => {
 });
 
 export default router;
-
