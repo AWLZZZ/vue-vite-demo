@@ -7,7 +7,7 @@ import AdminLayout from "../layout/AdminLayout.vue";
 import { useUserStore } from "../stores/user";
 
 const routes = [
-  // 🌐 普通前端（不需要登录）
+  // 🌐 普通前端
   {
     path: "/web",
     component: WebHome,
@@ -19,9 +19,9 @@ const routes = [
     component: Login,
   },
 
-  // 🧩 后台 Layout
+  // 🧩 后台（明确用 /admin）
   {
-    path: "/",
+    path: "/admin",
     component: AdminLayout,
     children: [
       {
@@ -43,16 +43,17 @@ const router = createRouter({
   routes,
 });
 
-// 路由守卫
 router.beforeEach((to) => {
   const userStore = useUserStore();
 
-  if (!userStore.isLogin && to.path === "/home") {
+  // 未登录禁止进后台
+  if (!userStore.isLogin && to.path.startsWith("/admin")) {
     return "/login";
   }
 
+  // 已登录禁止回登录页
   if (userStore.isLogin && to.path === "/login") {
-    return "/home";
+    return "/admin/home";
   }
 });
 
