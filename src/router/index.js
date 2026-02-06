@@ -2,16 +2,28 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "../views/Login.vue";
 import Home from "../views/Home.vue";
+import AdminLayout from "../layout/AdminLayout.vue";
+import { useUserStore } from "../stores/user";
 
 const routes = [
   {
     path: "/login",
     component: Login,
   },
+
+  // 后台 Layout
   {
-    path: "/home",
-    component: Home,
+    path: "/",
+    component: AdminLayout,
+    children: [
+      {
+        path: "home",
+        component: Home,
+      },
+    ],
   },
+
+  // 访问根路径时的默认行为
   {
     path: "/",
     redirect: "/login",
@@ -22,20 +34,19 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
-import { useUserStore } from "../stores/user";
 
+// 路由守卫（保持你原来的逻辑）
 router.beforeEach((to) => {
   const userStore = useUserStore();
 
-  // 未登录，想去 home → 拦截
   if (!userStore.isLogin && to.path === "/home") {
     return "/login";
   }
 
-  // 已登录，还想去 login → 拦截
   if (userStore.isLogin && to.path === "/login") {
     return "/home";
   }
 });
 
 export default router;
+
